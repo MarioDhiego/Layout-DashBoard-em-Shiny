@@ -38,10 +38,14 @@ library(fresh)
 ui <- dashboardPage(title= "Dasboard Acidentes de Transito",skin="blue",
 dashboardHeader(title="Anuário Estatístico de Òbito por Acidentes de Trânsito",
                 titleWidth=650,
-                tags$li(class="dropdown",tags$a(href="https://www.detran.pa.gov.br",icon("linkedin"), "Detran",target="_blank")),tags$li(class="dropdown",tags$a(href="https://github.com/MarioDhiego",icon("github"), "Author",target="_blank"))
+                tags$li(class="dropdown",tags$a(href="https://www.detran.pa.gov.br",icon("linkedin"), "Detran",target="_blank")),tags$li(class="dropdown",tags$a(href="https://github.com/MarioDhiego",icon("github"), "Author",target="_blank")),
+                dropdownMenu(type="messages"),
+                dropdownMenu(type="notifications"),
+                dropdownMenu(type="tasks")
 ),
 dashboardSidebar(
   sidebarMenu(
+    menuItem("ANUÁRIO"                     ,tabName="about1",icon=icon("mortar-board")),
     menuItem("MICRODADOS"                  ,tabName="banco1",icon=icon("database"),
               menuSubItem("Base de Dados"   ,tabName="base1"),
               menuSubItem("Fonte de Dados"  ,tabName="fonte1"),
@@ -75,12 +79,22 @@ dashboardSidebar(
 dashboardBody(
 #  use_theme(meu_tema),
   tabItems(
+    tabItem(tabName = "about1",
+            fluidRow(
+              tags$iframe(src = './about1.html',
+                          width='100%',height='800px',
+                          frameborder=0,scrolling='auto'
+              )
+            )
+            ),
     tabItem(tabName="genero1",
             fluidRow(
               box(width=12,
                   title="Gênero da Vítimas",
+                  background="green",
                   status="primary",
                   solidHeader=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   plotOutput("histograma1")
               )
@@ -92,6 +106,7 @@ dashboardBody(
                   title="Faixa Etária das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   plotOutput("histograma2")
               )
@@ -103,6 +118,7 @@ dashboardBody(
                   title="Raça das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   plotOutput("histograma3")
               )
@@ -114,6 +130,7 @@ dashboardBody(
                   title="Grau de Escolaridades das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   plotOutput("histograma4")
               )
@@ -125,6 +142,7 @@ dashboardBody(
                   title="Banco",
                   status="primary",
                   solideHeder=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   dataTableOutput("tabela1")
               )
@@ -136,6 +154,7 @@ dashboardBody(
                   title="Condicao da Vitima",
                   status="primary",
                   solideHeder=TRUE,
+                  collapsible=TRUE,
                   height=10, 
                   plotOutput("tabela2")
               )
