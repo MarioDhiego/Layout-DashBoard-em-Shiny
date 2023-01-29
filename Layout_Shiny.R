@@ -105,7 +105,8 @@ dashboardSidebar(width=200,
              menuSubItem("Faixa Etaria"      ,tabName="idade1"),
              menuSubItem("Raca"              ,tabName="raca1"),
              menuSubItem("Escolaridade"      ,tabName="escola1"),
-             menuSubItem("Renda Familiar"    ,tabName="renda1")),
+             menuSubItem("Renda Familiar"    ,tabName="renda1"),
+             menuSubItem("Estado Civil"      ,tabName="civil1")),
     menuItem("CONDIÇÃO DA VÍTIMA"          ,tabName="condicao1",icon=icon("wheelchair"),
            menuSubItem("Condição da Vítima",tabName="condi1"),
            menuSubItem("Tipo da Vítimas"   ,tabName="tipo1"),
@@ -180,20 +181,20 @@ dashboardBody(
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
-                  height=10,
+                  height=12,
                   verbatimTextOutput("resumoidade")
               )
             )
     ),
     tabItem(tabName="raca1",
             fluidRow(
-              box(width=12,
+              box(width=7,
                   title="Raça das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
                   height=12, 
-                  plotOutput("histograma3")
+                  plotlyOutput("histograma3")
               )
             )
     ),
@@ -223,16 +224,35 @@ dashboardBody(
     ),
     tabItem(tabName="condi1",
             fluidRow(
-              box(width=12,
+              box(width=7,
                   title="Condicao da Vitima",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
-                  height=12, 
-                  plotOutput("histograma5")
+                  height=35, 
+                  plotlyOutput("histograma5")
+              )
+            )
+    ),
+    tabItem(tabName="civil1",
+            fluidRow(
+              box(width=7,
+                  title="Estado Civil da Vitima",
+                  status="primary",
+                  solideHeder=TRUE,
+                  collapsible=TRUE,
+                  height=35, 
+                  plotlyOutput("histograma6")
               )
             )
     )
+    
+    
+    
+    
+    
+    
+    
 )
 )
 )
@@ -330,9 +350,6 @@ ggplotly(g2)
 
 
 output$histograma4 <- renderPlotly({
-
-  
-  
 Tabela_DT$Escolaridade = factor(Tabela_DT$Escolaridade,
                           levels=names(sort(table(Tabela_DT$Escolaridade), 
                           decreasing=TRUE)))  
@@ -353,6 +370,72 @@ ggplotly(g3)
 
 
 })
+
+
+
+output$histograma3 <- renderPlotly({
+  Tabela_DT$Raca = factor(Tabela_DT$Raca ,
+                                  levels=names(sort(table(Tabela_DT$Raca ), 
+                                                    decreasing=TRUE)))
+  g4 <- ggplot(Tabela_DT, aes(x=Raca))+
+    geom_bar(fill="blue")+
+    labs(x="Raça",
+         y="Número de Vítimas",
+         title="Gráfico de Barras",
+         caption="Fonte: Detran")+
+    theme_gray()+
+    theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+          plot.caption=element_text(size=10L,face="bold",hjust=0), 
+          axis.title.y=element_text(size=12L,face="bold"), 
+          axis.title.x=element_text(size=12L,face="bold"),
+          legend.position = "bottom")
+  ggplotly(g4)
+})
+
+
+output$histograma5 <- renderPlotly({
+  Tabela_DT$Condição = factor(Tabela_DT$Condição,
+                          levels=names(sort(table(Tabela_DT$Condição), 
+                                            decreasing=TRUE)))
+  g5 <- ggplot(Tabela_DT, aes(x=Condição))+
+    geom_bar(fill="blue")+
+    labs(x="Condição da Vítima",
+         y="Número de Vítimas",
+         title="Gráfico de Barras",
+         caption="Fonte: Detran")+
+    theme_gray()+
+    theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+          plot.caption=element_text(size=10L,face="bold",hjust=0), 
+          axis.title.y=element_text(size=12L,face="bold"), 
+          axis.title.x=element_text(size=12L,face="bold"),
+          legend.position = "bottom")
+  ggplotly(g5)
+})
+
+
+
+output$histograma6 <- renderPlotly({
+  Tabela_DT$`Estado Civil` = factor(Tabela_DT$`Estado Civil`,
+                              levels=names(sort(table(Tabela_DT$`Estado Civil`), 
+                                                decreasing=TRUE)))
+  g6 <- ggplot(Tabela_DT, aes(x=`Estado Civil`))+
+    geom_bar(fill="blue")+
+    labs(x="Estado Civil da Vítima",
+         y="Número de Vítimas",
+         title="Gráfico de Barras",
+         caption="Fonte: Detran")+
+    theme_gray()+
+    theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+          plot.caption=element_text(size=10L,face="bold",hjust=0), 
+          axis.title.y=element_text(size=12L,face="bold"), 
+          axis.title.x=element_text(size=12L,face="bold"),
+          legend.position = "bottom")
+  ggplotly(g6)
+})
+
+
+
+
 
 
 
