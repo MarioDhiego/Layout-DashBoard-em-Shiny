@@ -153,7 +153,7 @@ dashboardBody(
                   solidHeader=TRUE,
                   collapsible=TRUE,
                   height=10, 
-                  plotOutput("histograma1")
+                  plotlyOutput("histograma1")
               ),
               box(width=6,
                 title="Estatística Resumo",
@@ -167,15 +167,15 @@ dashboardBody(
     ),
     tabItem(tabName="idade1",
             fluidRow(
-              box(width=6,
+              box(width=7,
                   title="Faixa Etária das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
-                  height=10, 
-                  plotOutput("histograma2")
+                  height=15, 
+                  plotlyOutput("histograma2")
               ),
-              box(width=6,
+              box(width=5,
                   title="Estatística Descritiva",
                   status="primary",
                   solidHeader=TRUE,
@@ -199,24 +199,24 @@ dashboardBody(
     ),
     tabItem(tabName="escola1",
             fluidRow(
-              box(width=12,
+              box(width=7,
                   title="Grau de Escolaridades das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
                   height=12, 
-                  plotOutput("histograma4")
+                  plotlyOutput("histograma4")
               )
             )
     ),
     tabItem(tabName="base1",
             fluidRow(
               box(width=12,
-                  title="Base de Dados",
+                  title="Data Set",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
-                  height=12, 
+                  height=35, 
                   dataTableOutput("tabela1")
               )
             )
@@ -238,15 +238,52 @@ dashboardBody(
 )
 
 server <- function(input, output, session){
-  
-output$histograma1 <- renderPlot({
-    hist(mtcars$mpg, 
-         xlab="Milhas por Galão",
-         ylab="Nº de Carros",
-         col="blue",
-         density=TRUE,
-         main="Histograma1")
+
+
+#-------------------------------------------------------------------------------
+# Gráfico 2 - Genero
+output$histograma1 <- renderPlotly({
+
+# Definir diretorio
+setwd("C:/Users/mario Dhiego/Documents/ENADE_2018_RMarkdown/Esqueleto_shiny/DashBoard1/Layout-DashBoard-em-Shiny")
+
+# Ler Base de Dados
+Tabela_DT <- read_excel("Tabela_DT.xls")
+Tabela_DT$Genero = factor(Tabela_DT$Genero,
+                          levels=names(sort(table(Tabela_DT$Genero), 
+                                            decreasing=TRUE)))  
+
+g1 <- ggplot(Tabela_DT)+
+  aes(x=Genero)+
+  geom_bar(fill="blue")+
+ labs(x="Gênero",
+      y="Número de Vítimas",
+      title="Gráfico de Barras",
+      caption="Fonte: Detran")+
+  theme_gray()+
+ theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+       plot.caption=element_text(size=10L,face="bold",hjust=0), 
+       axis.title.y=element_text(size=12L,face="bold"), 
+       axis.title.x=element_text(size=12L,face="bold"),
+       legend.position = "bottom")
+ggplotly(g1)
+
+#(table(Tabela_DT$Genero),
+#        xlab="",
+#        ylab="",
+#        col="blue",
+#        #xlim=c(0,300),
+#        #ylim=c(0,300),
+#        axis.lty="solid",
+#        lwd=2,
+#        font=2,
+#        main="Gráfico de Barras")
+
   })
+#-------------------------------------------------------------------------------
+
+
+
   
 output$summary1 <- renderPrint({
     summary(mtcars$mpg)
@@ -258,15 +295,69 @@ output$resumoidade <- renderPrint({
 })
 
 
+# Gráfico 2 - Idade
+output$histograma2 <- renderPlotly({
+g2 <- ggplot(Tabela_DT, aes(x=Idade))+
+  geom_histogram(aes(y=..density..), bins=30L,binwidth=5,fill="blue")+
+  geom_density(alpha=.2, fill="white")+
+    labs(x="Idade",
+         y="Número de Vítimas",
+         title="Histograma",
+         caption="Fonte: Detran")+
+  theme_gray(base_size=14)+
+  theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+        plot.caption=element_text(size=10L,face="bold",hjust=0), 
+        axis.title.y=element_text(size=12L,face="bold"), 
+        axis.title.x = element_text(size=12L,face="bold"))
+ggplotly(g2)
   
-output$histograma2 <- renderPlot({
-    hist(Tabela_DT$Idade, 
-         xlab="Idades",
-         ylab="Nº de Vítimas Fatais",
-         col="blue",
-         density=TRUE,
-         main="Hitograma das Idades")
+    #hist(Tabela_DT$Idade,
+    #     col="blue",
+    #     freq=T,
+    #     xlab="Idades",
+    #    ylab="Nº de Vítimas Fatais",
+    #     border="black",
+    #     xlim=c(0,100),
+    #     ylim=c(0,80),
+    #     axis.lty="solid",
+    #     lwd=2,
+    #     font=2,
+    #     #probability=TRUE,
+    #     main="Hitograma das Idades",
+    #     #sub="Fonte: Detran"
+    #    )
   })
+
+
+output$histograma4 <- renderPlotly({
+
+  
+  
+Tabela_DT$Escolaridade = factor(Tabela_DT$Escolaridade,
+                          levels=names(sort(table(Tabela_DT$Escolaridade), 
+                          decreasing=TRUE)))  
+
+g3 <- ggplot(Tabela_DT, aes(x=Escolaridade))+
+  geom_bar(fill="blue")+
+  labs(x="Grau de Escolaridade",
+       y="Número de Vítimas",
+       title="Gráfico de Barras",
+       caption="Fonte: Detran")+
+  theme_gray()+
+  theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+        plot.caption=element_text(size=10L,face="bold",hjust=0), 
+        axis.title.y=element_text(size=12L,face="bold"), 
+        axis.title.x=element_text(size=12L,face="bold"),
+        legend.position = "bottom")
+ggplotly(g3)
+
+
+})
+
+
+
+
+
   
 output$tabela1 <- renderDataTable({
 setwd("C:/Users/mario Dhiego/Documents/ENADE_2018_RMarkdown/Esqueleto_shiny/DashBoard1/Layout-DashBoard-em-Shiny")
