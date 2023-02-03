@@ -25,16 +25,25 @@ library(ggthemes)
 library(geobr)
 library(sf)
 library(tmap)
+library(leaflet)
 
 # Fazer gráficos Dinâmicos
 library(plotly)
+library(dygraphs)
+
 
 # Fazer Tabelas Dinâmicas
 library(DT)
 library(data.table)
 library(reactable)
 library(kableExtra)
+library(gapminder)
 library(sparkline)
+library(Hmisc)
+library(knitr)
+library(pastecs)
+library(gt)
+library(psych)
 
 # Fazer Gráfico de Correlação
 library(ggcorrplot)
@@ -49,7 +58,7 @@ library(rmarkdown)
 
 # Customização Visual
 #library(fresh)
-library(stargazer)
+#ibrary(stargazer)
 
 
 # Customização Visual
@@ -169,7 +178,7 @@ dashboardBody(
     tabItem(tabName="idade1",
             fluidRow(
               box(width=7,
-                  title="Faixa Etária das Vítimas",
+                  title="Distribuição Etário das Vitimas Fatais",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
@@ -177,12 +186,12 @@ dashboardBody(
                   plotlyOutput("histograma2")
               ),
               box(width=5,
-                  title="Estatística Descritiva",
+                  title="Perfil Etário das Vitimas Fatais",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
                   height=12,
-                  verbatimTextOutput("resumoidade")
+                  DT::dataTableOutput("resumoidade")
               )
             )
     ),
@@ -306,23 +315,37 @@ ggplotly(g1)
 
   
 output$summary1 <- renderPrint({
-    summary(mtcars$mpg)
+summary(Tabela_DT$Idade)
   })
   
 
-output$resumoidade <- renderPrint({
-  summary(Tabela_DT$Idade)
+output$resumoidade <- DT::renderDataTable({
+  Descritiva <- rbind(
+                      "Vitimas Fatais"=NROW(Tabela_DT$Idade),
+                      "Menor Idade"=min(Tabela_DT$Idade),
+                      "Maior Idade"=max(Tabela_DT$Idade),
+                      "Idade Média"=mean(Tabela_DT$Idade),
+                      "Idade Mediana"=median(Tabela_DT$Idade),
+                      "25/%  Idades"=quantile(Tabela_DT$Idade, probs = 0.25),
+                      "75/%  Idades"=quantile(Tabela_DT$Idade, probs = 0.75)
+  )
+  colnames(Descritiva)="Estatísticas"
+  datatable(Descritiva,
+            caption='Tabela 1: Perfil Etário das Vitimas Fatais.')
+    
+  
+  
 })
 
 
 # Gráfico 2 - Idade
 output$histograma2 <- renderPlotly({
 g2 <- ggplot(Tabela_DT, aes(x=Idade))+
-  geom_histogram(aes(y=..density..), bins=30L,binwidth=5,fill="blue")+
-  geom_density(alpha=.2, fill="white")+
+  geom_histogram(binwidth=5,col="blue")+
+  #geom_density(alpha=.2, fill="white")+
     labs(x="Idade",
          y="Número de Vítimas",
-         title="Histograma",
+         title="Vítimas Fatais por Acidentes de Trânsito",
          caption="Fonte: Detran")+
   theme_gray(base_size=14)+
   theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
@@ -330,22 +353,23 @@ g2 <- ggplot(Tabela_DT, aes(x=Idade))+
         axis.title.y=element_text(size=12L,face="bold"), 
         axis.title.x = element_text(size=12L,face="bold"))
 ggplotly(g2)
-  
-    #hist(Tabela_DT$Idade,
-    #     col="blue",
-    #     freq=T,
-    #     xlab="Idades",
-    #    ylab="Nº de Vítimas Fatais",
-    #     border="black",
-    #     xlim=c(0,100),
-    #     ylim=c(0,80),
-    #     axis.lty="solid",
-    #     lwd=2,
-    #     font=2,
-    #     #probability=TRUE,
-    #     main="Hitograma das Idades",
-    #     #sub="Fonte: Detran"
-    #    )
+
+  #hist(Tabela_DT$Idade,
+  #       col="blue",
+  #       freq=T,
+  #       xlab="Idades",
+  #      ylab="Nº de Vítimas",
+  #       border="black",
+  #       xlim=c(0,100),
+  #       ylim=c(0,80),
+  #       axis.lty="solid",
+  #       lwd=2,
+  #       font=2,
+         #probability=TRUE,
+  #      main="Vítimas Fatais p/ Acidentes de Trânsito",
+         #sub="Fonte: Detran"
+  #     )
+    
   })
 
 
