@@ -3,6 +3,7 @@
 # Leitura de Base de Dados
 library(readr)
 library(readxl)
+library(rsconnect)
 
 # Fazer Dashboard
 library(shiny)
@@ -33,6 +34,7 @@ library(ggthemes)
 library(leaflet)
 
 # Fazer gráficos Dinâmicos
+
 library(plotly)
 library(highcharter)
 
@@ -105,12 +107,12 @@ dashboardSidebar(width=200,
   sidebarMenu(
     menuItem("ANUÁRIO"                       ,tabName="about1",icon=icon("address-card"),
             menuSubItem("Sobre Anuário"      ,tabName="sobre1"),
-            menuSubItem("Pareamento de Dados",tabName="pareamento1") 
+            menuSubItem("Metodologia"        ,tabName="pare1") 
              ),
     menuItem("MICRODADOS"                    ,tabName="banco1",icon=icon("database"),
               menuSubItem("Base de Dados"    ,tabName="base1"),
               menuSubItem("Fonte de Dados"   ,tabName="fonte1"),
-              menuSubItem("Medidas"          ,tabName="medi1")),
+              menuSubItem("Pareamento"        ,tabName="medi1")),
     menuItem("SOCIOECONÔMICO"                ,tabName="socio1",icon=icon("male"),
              menuSubItem("Gênero"            ,tabName="genero1"),
              menuSubItem("Idade"             ,tabName="idade1"),
@@ -393,13 +395,51 @@ dashboardBody(
     tabItem(tabName="fonte1",
             fluidRow(
               box(width=12,
-                  title="Fontes de Pareamento",
+                  title="Fontes de Dados",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
                   height=35, 
                   DiagrammeROutput("fonte1")
               )
+            )
+    ),
+    tabItem(tabName="medi1",
+            fluidRow(
+              box(width=3,
+                  title="Etapa 1",
+                  status="primary",
+                  solideHeder=TRUE,
+                  collapsible=TRUE,
+                  height=35, 
+                  DiagrammeROutput("med1")
+              ),
+              box(width=3,
+                  title="Etapa 2",
+                  status="primary",
+                  solideHeder=TRUE,
+                  collapsible=TRUE,
+                  height=35, 
+                  DiagrammeROutput("med2")
+              ),
+              box(width=3,
+                  title="Etapa 3",
+                  status="primary",
+                  solideHeder=TRUE,
+                  collapsible=TRUE,
+                  height=35, 
+                  DiagrammeROutput("med3")
+              ),
+              box(width=3,
+                  title="Etapa 4",
+                  status="primary",
+                  solideHeder=TRUE,
+                  collapsible=TRUE,
+                  height=35, 
+                  DiagrammeROutput("med4")
+              )
+              
+              
             )
     )
     )
@@ -441,8 +481,8 @@ output$histograma1 <- renderHighchart({
     hc_add_theme(hc_theme_google())
 })
 
-library(DiagrammeR)
 
+library(DiagrammeR)
 output$fonte1 <- renderDiagrammeR({
   
 mermaid("
@@ -466,13 +506,63 @@ H-->L[ANUÁRIO WEB]
 I-->L[ANUÁRIO WEB]
 J-->L{ANUÁRIO WEB}
 K-->L(ANUÁRIO WEB)
-", width = 50)
-  
-  
-  
-  
+",width=50)
 })
 
+
+
+output$med1 <- renderDiagrammeR({
+  mermaid("
+graph TB
+A[PAREAMENTO1]-->B{Base Policial}
+B-->C[PC]
+B-->D[PRE]
+B-->E[PRF]
+B-->F[IML]
+C-->G(LUVF1)
+D-->G(LUVF1)
+E-->G(LUVF1)
+F-->G(LUVF1)
+",width=30)
+})
+
+
+output$med2 <- renderDiagrammeR({
+  mermaid("
+graph TB
+A[PAREAMENTO2]-->B{Base Resgate}
+B-->C[SAMU]
+B-->D[BOMBEIRO]
+C-->E(LUVF2)
+D-->E(LUVF2)
+",width=30)
+})
+
+output$med3 <- renderDiagrammeR({
+  mermaid("
+graph TB
+A[PAREAMENTO3]-->B{Base Saúde}
+B-->C[SESMA]
+B-->D[SESPA]
+B-->E(HMUE)
+C-->F(LUVF3)
+D-->F(LUVF3)
+E-->F(LUVF3)
+",width=30)
+})
+
+output$med4 <- renderDiagrammeR({
+  mermaid("
+graph TB
+A[PAREAMENTO FINAL]-->B{BASES}
+B-->C[LUVF1]
+B-->D[LUVF2]
+B-->E(LUVF3)
+C-->F(BASE FINAL)
+D-->F(BASE FINAL)
+E-->F(BASE FINAL)
+",width=30)
+})
 
 
 
@@ -492,6 +582,7 @@ K-->L(ANUÁRIO WEB)
 
 #describeBy(Pareamento_Limpo$Idade)
 #library(gmodels)
+
 library(janitor) 
 library(kableExtra)
 library(knitr)
