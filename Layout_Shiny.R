@@ -1,11 +1,40 @@
+#--------------------------------------------------------------------------#
+#              Making off AO VIVO                                          #
+#--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------
+# PROJETO:    DashBoard Interativo no R
+# Author:     Mário Diego Rocha Valente
+# Contato:    https://github.com/MarioDhiego
+# Alma Mater: UFPA
+# Phone:      +55 (91) 98060-7471
 
 
-# Leitura de Base de Dados
+#------------------ PASSO zero ---------------------------------------------
+# Single: Sixto Rodriguez
+# Music: Cant get Away
+#---------------------------------------------------------------------------
+
+
+#------------------ PASSO 1 ------------------------------------------------
+# Instalar os Pacotes
+
+# Instalação Conjunta
+#install.packages(c("readr","readxl", "shiny", "shinydashboard",
+#                   "dplyr","magrittr","ggplot2",))
+#---------------------------------------------------------------------------
+
+
+
+#------------------ PASSO 2 ------------------------------------------------
+# Ativar Pacotes 
+
+# Pacotes para Leitura de Base de Dados
 library(readr)
 library(readxl)
 library(rsconnect)
 
-# Fazer Dashboard
+# Pacote para Fazer Dashboard
 library(shiny)
 library(shinydashboard)
 #library(shinydashboardPlus)
@@ -14,31 +43,30 @@ library(shinydashboard)
 #library(shinyjs) 
 #library(sodium) 
 
-# Manipulação de Dados
-library(tidyverse)
+# Pacote para Manipulação de Dados
+#library(tidyverse)
 library(dplyr)
 library(magrittr)
 
-# Fazer Gráficos
+# Pacote para Fazer Gráficos
 library(ggplot2)
-#library(gplots)
+
 
 # Incluir Temas no gráfico
 library(ggthemes)
 
-# Fazer Mapas
+# Pacote para Fazer Mapas
 #library(geobr)
 #library(sf)
 #library(tmap)
 #library(rgdal)
 library(leaflet)
 
-# Fazer gráficos Dinâmicos
-
+# Pacote para Fazer gráficos Dinâmicos
 library(plotly)
 library(highcharter)
 
-# Fazer Tabelas Dinâmicas
+# Pacote para Fazer Tabelas Dinâmicas
 library(DT)
 #library(data.table)
 #library(reactable)
@@ -48,9 +76,11 @@ library(DT)
 # Fazer Gráfico de Correlação
 library(ggcorrplot)
 
-# Trabalhar com html
+# Pacote para Layout
 library(htmltools)
 library(htmlwidgets)
+
+
 
 # Trabalhar com Markdown
 #library(markdown)
@@ -59,6 +89,8 @@ library(htmlwidgets)
 # Customização Visual
 #library(fresh)
 #library(stargazer)
+
+#---------------------------------------------------------------------------
 
 
 # Customização Visual
@@ -81,6 +113,23 @@ library(htmlwidgets)
 #rm(list=ls())
 
 
+#------------------ PASSO 3 ------------------------------------------------
+
+# Definir diretorio de Trabalho
+setwd("C:/Users/mario Dhiego/Documents/ENADE_2018_RMarkdown/Esqueleto_shiny/DashBoard1/Layout-DashBoard-em-Shiny")
+
+
+#------------------ PASSO 4 ------------------------------------------------
+# Ler Base de Dados
+Pareamento_Limpo <- read_excel("Pareamento_Limpo.xls")
+Pareamento_Limpo2 <- read_excel("Pareamento_Limpo2.xls")
+
+
+
+
+#------------------ PASSO 5 ------------------------------------------------
+# Criação do DashBoard
+#---------------------------------------------------------------------------
 
 # Criação dos Menus
 ui <- dashboardPage(title="Dasboard Acidentes de Transito",skin="blue",
@@ -88,7 +137,7 @@ dashboardHeader(tags$li(div(img(src='detran1.jpeg',
                 height = "20px"),
                 style = "padding-top:12px; padding-right:200px;"),
                 class = "dropdown"),
-                title="ANUÁRIO ESTATÍSTICO DE ÓBITO",
+                title="ANUÁRIO ESTATÍSTICO DE ACIDENTES DE TRÂNSITO",
                 titleWidth=650,
                 tags$li(class = "dropdown",
                         tags$style(".main-header {max-height:50px}"),
@@ -1087,3 +1136,19 @@ output$bairro2 <- renderTable({
 
 
 shinyApp(ui, server)
+
+
+
+
+#------------------ PASSO 6 -----------------
+
+# Compilar o script
+
+
+
+
+
+
+
+
+# Commit para o github
