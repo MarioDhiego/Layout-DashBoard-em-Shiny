@@ -49,8 +49,10 @@ library(DiagrammeR)
 #library(tmap)
 #library(tmaptools)
 #library(rgdal)
-#library(leaflet)
-#library(ggmap)
+library(leaflet)
+library(ggmap)
+library(maps)
+library(ggtext)
 #library(BETS)
 #library(RColorBrewer)
 #library(ggspatial)
@@ -99,14 +101,15 @@ dashboardHeader(tags$li(div(img(src='detran1.jpeg',
                         tags$style(".main-header {max-height:50px}"),
                         tags$style(".main-header.logo {height:50px}")
                 ),
-                tags$li(class="dropdown",tags$a(href="https://www.detran.pa.gov.br",
-                                                icon("road"),"DETRAN-PA",target="_blank")),
-                tags$li(class="dropdown",tags$a(href="https://twitter.com/DETRAN_PA",
-                                                icon("twitter"),"twitter",target="_blank")),
-                tags$li(class="dropdown",tags$a(href="https://www.facebook.com/detranPARA",
-                                                icon("facebook"),"facebook",target="_blank")),
-                tags$li(class="dropdown",tags$a(href="https://github.com/MarioDhiego",
-                                                icon("github"),"AUTOR",target="_blank")),
+tags$li(class="dropdown",tags$a(href="https://www.detran.pa.gov.br",
+                        icon("road"),"DETRAN-PA",target="_blank")),
+tags$li(class="dropdown",tags$a(href="https://twitter.com/DETRAN_PA",
+                        icon("twitter"),"twitter",target="_blank")),
+tags$li(class="dropdown",tags$a(href="https://www.facebook.com/detranPARA",
+                        icon("facebook"),"facebook",target="_blank")),
+tags$li(class="dropdown",tags$a(href="", icon("youtube"),"Channel",target="_blank")),
+tags$li(class="dropdown",tags$a(href="https://github.com/MarioDhiego",
+                        icon("github"),"AUTOR",target="_blank")),
                 dropdownMenu(type="messages"),
                 dropdownMenu(type="notifications"),
                 dropdownMenu(type="tasks")
@@ -165,7 +168,7 @@ dashboardBody(
   tabItems(
     tabItem(tabName="sobre1",
             tabBox(id="t1", width = 12,
-            tabPanel("Termilogia", icon=icon("address-card"),
+            tabPanel("Anuário Web", icon=icon("address-card"),
             fluidRow(
               column(width=8,
                      position="left",
@@ -418,18 +421,6 @@ dashboardBody(
               )
             )
     ),
-tabItem(tabName="metrop1",
-        fluidPage(
-          box(width=12,
-              title="Mapa Municipios",
-              status="danger", 
-              solidHeader=TRUE, 
-              collapsible=TRUE,
-              enable_dropdown=TRUE,
-              leafletOutput("mapa1")
-    )
-  )
-),
     tabItem(tabName="fonte1",
             fluidRow(
               box(width=12,
@@ -441,7 +432,12 @@ tabItem(tabName="metrop1",
                   DiagrammeROutput("fonte1")
               )
             )
-    )
+    ),
+tabItem(tabName = "belem1",
+box(
+selectInput("crimetype","Select Arrest Type",choices=c2, selected="Rape",width=250),
+withSpinner(plotOutput("map_plot")), width = 12)
+  )
     )
   )
 )
@@ -1059,10 +1055,7 @@ output$histograma15 <- renderHighchart({
 
 
 
-#output$mapa1 <- renderLeaflet({
- 
 
-#})
 
   
 
@@ -1071,6 +1064,56 @@ output$histograma15 <- renderHighchart({
 
 #setwd("C:/Users/mario.valente/Desktop/Relatorio_Dinamico/DASH1")
 #map <-st_read("PA_Municipios_2020.shp", stringsAsFactors = FALSE)
+
+states = rownames(USArrests)
+my_data <- USArrests %>% 
+  mutate(State=states) 
+
+c1 = my_data %>% 
+  select(-"State") %>% 
+  names()
+
+c2 = my_data %>% 
+  select(-"State", -"UrbanPop") %>% 
+  names()
+
+state_map <- map_data("state")
+
+
+my_data1 = my_data %>% 
+  mutate(State = tolower(State))
+
+merged =right_join(my_data1, state_map,  by=c("State" = "region"))
+
+st = data.frame(abb = state.abb, stname=tolower(state.name), x=state.center$x, y=state.center$y)
+
+new_join = left_join(merged, st, by=c("State" = "stname"))
+
+
+output$map_plot <- renderPlot({
+  new_join %>% 
+ggplot(aes(x=long,y=lat,fill=get(input$crimetype),group=group)) +
+geom_polygon(color="black",size=0.4) +
+scale_fill_gradient(low="#73A5C6",
+                        high="#001B3A",
+                        name=paste(input$crimetype,"Arrest rate")) +
+theme_void()+
+labs(title=paste("Mapa de ",
+                 input$crimetype ,"")) +
+theme(
+plot.title = element_textbox_simple(face="bold", 
+                                size=18,
+                                halign=0.5),
+legend.position = c(0.2, 0.1),
+legend.direction = "horizontal")+
+geom_text(aes(x=x, y=y, label=abb), size=4,color="white")
+  
+})
+
+
+
+  
+
 
 
 
