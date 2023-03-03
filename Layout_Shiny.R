@@ -1,179 +1,145 @@
-#--------------------------------------------------------------------------#
-#              Making off AO VIVO                                          #
-#--------------------------------------------------------------------------#
+#1 INSTALAÇÃO DE PACOTES                                                        ----
+#install.packages(c("readr","readxl","tidyverse","ggthemes","plotly",
+#                   "highcharter","ggcorrplot","DT","DiagrammeR","shiny",
+#                   "shinydashboard"))
 
-#--------------------------------------------------------------------------
-# PROJETO:    DashBoard Interativo no R
-# Author:     Mário Diego Rocha Valente
-# Contato:    https://github.com/MarioDhiego
-# Alma Mater: UFPA
-# Phone:      +55 (91) 98060-7471
-
-
-#------------------ PASSO zero ---------------------------------------------
-# Single: Sixto Rodriguez
-# Music: Cant get Away
-#---------------------------------------------------------------------------
-
-
-#------------------ PASSO 1 ------------------------------------------------
-# Instalar os Pacotes
-
-# Instalação Conjunta
-#install.packages(c("readr","readxl", "shiny", "shinydashboard",
-#                   "dplyr","magrittr","ggplot2",))
-#---------------------------------------------------------------------------
-
-
-
-#------------------ PASSO 2 ------------------------------------------------
-# Ativar Pacotes 
-
-# Pacotes para Leitura de Base de Dados
+#2 ATIVAÇÃO DE PACOTES                                                          ----
+#1.1 Pacote p/ Leitura de Base de Dados                                         ----
 library(readr)
 library(readxl)
-library(rsconnect)
+library(openxlsx)
+#library(rsconnect)
 
-# Pacote para Fazer Dashboard
+#1.2 Pacotes p/ Manipulação de Dados                                            ----
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(purrr)
+
+#1.3 Pacotes p/ Fazer Gráficos                                                  ----
+library(ggplot2)
+library(ggthemes)
+library(gganimate)
+#library(gplots)
+library(plotly)
+library(highcharter)
+library(ggcorrplot)
+library(geojsonsf)
+#library(fmsb)
+#library(ggiraph)
+#library(ggiraphExtra)
+
+#1.4 Pacotes p/ Fazer Tabelas Dinâmicas                                         ----
+library(DT)
+library(data.table)
+library(reactable)
+library(kableExtra)
+#library(sparkline)
+#library(gmodels)
+library(janitor) 
+library(kableExtra)
+library(knitr)
+library(DiagrammeR)
+
+#1.5 Pacotes p/Fazer Mapas                                                      ----
+#library(geobr)
+#library(sf)
+#ibrary(raster)
+#library(tmap)
+#library(tmaptools)
+#library(rgdal)
+#library(leaflet)
+#library(ggmap)
+#library(BETS)
+#library(RColorBrewer)
+#library(ggspatial)
+#library(curl)
+#library(lwgeom)
+
+
+#1.6 Pacotes p/ Fazer Dashboard                                                 ----
 library(shiny)
 library(shinydashboard)
-#library(shinydashboardPlus)
-#library(shinyWidgets)
+library(shinydashboardPlus)
+library(shinyWidgets)
+library(shinycssloaders)
 #library(shinyauthr)
 #library(shinyjs) 
 #library(sodium) 
-
-# Pacote para Manipulação de Dados
-#library(tidyverse)
-library(dplyr)
-library(magrittr)
-
-# Pacote para Fazer Gráficos
-library(ggplot2)
-
-
-# Incluir Temas no gráfico
-library(ggthemes)
-
-# Pacote para Fazer Mapas
-#library(geobr)
-#library(sf)
-#library(tmap)
-#library(rgdal)
-library(leaflet)
-
-# Pacote para Fazer gráficos Dinâmicos
-library(plotly)
-library(highcharter)
-
-# Pacote para Fazer Tabelas Dinâmicas
-library(DT)
-#library(data.table)
-#library(reactable)
-#library(kableExtra)
-#library(sparkline)
-
-# Fazer Gráfico de Correlação
-library(ggcorrplot)
-
-# Pacote para Layout
 library(htmltools)
 library(htmlwidgets)
+library(markdown)
+library(rmarkdown)
+library(curl)
 
-
-
-# Trabalhar com Markdown
-#library(markdown)
-#library(rmarkdown)
-
-# Customização Visual
+#1.7 Pacote p/ Customização Visual                                              ----
 #library(fresh)
 #library(stargazer)
 
-#---------------------------------------------------------------------------
-
-
-# Customização Visual
-#meu_tema <- create_theme(
-#  adminlte_color(
-#    aqua="#0821F7",
-#    blue="#6573E5",
-#    red ="#ABB2ED",
-#  ),
-#    adminlte_sidebar(
-#      dark_bg="#09DAF3"
-#        ),
-#    adminlte_global(
-#      content_bg="#99DEE6" 
-#    )
-#    )
-
-
-#liberar memoria
-#rm(list=ls())
-
-
-#------------------ PASSO 3 ------------------------------------------------
-
-# Definir diretorio de Trabalho
+#3 DEFINIR DIRETÓRIO DE TRABALHO                                                ----
 setwd("C:/Users/mario Dhiego/Documents/ENADE_2018_RMarkdown/Esqueleto_shiny/DashBoard1/Layout-DashBoard-em-Shiny")
 
-
-#------------------ PASSO 4 ------------------------------------------------
-# Ler Base de Dados
+#4 LEITURA DAS BASE DE DADOS                                                    ----
 Pareamento_Limpo <- read_excel("Pareamento_Limpo.xls")
 Pareamento_Limpo2 <- read_excel("Pareamento_Limpo2.xls")
 
 
-
-
-#------------------ PASSO 5 ------------------------------------------------
-# Criação do DashBoard
-#---------------------------------------------------------------------------
-
-# Criação dos Menus
-ui <- dashboardPage(title="Dasboard Acidentes de Transito",skin="blue",
+#5 Criação do Dasboard Interativo                                               ----
+#2 Use Interface(Interface do Usuário)                                          ----
+#2.1 Criação dos Menus Dashboard                                                ----
+ui <- dashboardPage(title= "Dasboard Acidentes de Transito", skin="blue",
 dashboardHeader(tags$li(div(img(src='detran1.jpeg',
-                height = "20px"),
-                style = "padding-top:12px; padding-right:200px;"),
+                height = "30px"),
+                style = "padding-top:12px; padding-right:350px;"),
                 class = "dropdown"),
-                title="ANUÁRIO ESTATÍSTICO DE ACIDENTES DE TRÂNSITO",
-                titleWidth=650,
+                title="ANUÁRIO ESTATÍSTICO DE ÓBITO POR ACIDENTES DE TRÂNSITO",
+                titleWidth=750,
                 tags$li(class = "dropdown",
                         tags$style(".main-header {max-height:50px}"),
                         tags$style(".main-header.logo {height:50px}")
                 ),
                 tags$li(class="dropdown",tags$a(href="https://www.detran.pa.gov.br",
                                                 icon("road"),"DETRAN-PA",target="_blank")),
+                tags$li(class="dropdown",tags$a(href="https://twitter.com/DETRAN_PA",
+                                                icon("twitter"),"twitter",target="_blank")),
+                tags$li(class="dropdown",tags$a(href="https://www.facebook.com/detranPARA",
+                                                icon("facebook"),"facebook",target="_blank")),
                 tags$li(class="dropdown",tags$a(href="https://github.com/MarioDhiego",
                                                 icon("github"),"AUTOR",target="_blank")),
                 dropdownMenu(type="messages"),
                 dropdownMenu(type="notifications"),
                 dropdownMenu(type="tasks")
 ),
-dashboardSidebar(width=200,
-                 tags$style(".left-side, .main-sidebar {padding-center: 120px}"),
+
+#2.2 Criação da Barra Lateral Dashboard                                          ----
+dashboardSidebar(
+  sidebarSearchForm(textId="SearchText",
+                    buttonId="buttonSearch",
+                    label="Busca",
+                    icon=icon("folder-open")),
+  width=240,tags$style(".left-side, .main-sidebar {padding-center: 150px}"),
   sidebarMenu(
     menuItem("ANUÁRIO"                       ,tabName="about1",icon=icon("address-card"),
-            menuSubItem("Sobre Anuário"      ,tabName="sobre1"),
-            menuSubItem("Metodologia"        ,tabName="pare1") 
+            menuSubItem("Sobre Anuário"      ,tabName="sobre1", icon=icon("book")),
+            menuSubItem("Vídeo"              ,tabName="pareamento1", icon=icon("video")) 
              ),
     menuItem("MICRODADOS"                    ,tabName="banco1",icon=icon("database"),
-              menuSubItem("Base de Dados"    ,tabName="base1"),
-              menuSubItem("Fonte de Dados"   ,tabName="fonte1"),
-              menuSubItem("Pareamento"        ,tabName="medi1")),
+              menuSubItem("Base de Dados"    ,tabName="base1", icon=icon("coins")),
+              menuSubItem("Fonte de Dados"   ,tabName="fonte1",icon=icon("network-wired"))
+                          ),
     menuItem("SOCIOECONÔMICO"                ,tabName="socio1",icon=icon("male"),
-             menuSubItem("Gênero"            ,tabName="genero1"),
-             menuSubItem("Idade"             ,tabName="idade1"),
-             menuSubItem("Raça"              ,tabName="raca1"),
-             menuSubItem("Escolaridade"      ,tabName="escola1"),
-             menuSubItem("Estado Civil"      ,tabName="civil1")),
+             menuSubItem("Gênero"            ,tabName="genero1",icon=icon("venus-mars")),
+             menuSubItem("Idade"             ,tabName="idade1",icon=icon("baby")),
+             menuSubItem("Raça"              ,tabName="raca1",icon=icon("male")),
+             menuSubItem("Escolaridade"      ,tabName="escola1",icon=icon("graduation-cap")),
+             menuSubItem("Estado Civil"      ,tabName="civil1",icon=icon("ring"))),
     menuItem("CONDIÇÃO DA VÍTIMA"            ,tabName="condicao1",icon=icon("wheelchair"),
            menuSubItem("Condição da Vítima"  ,tabName="condi1"),
            menuSubItem("Tipos de Acidente"    ,tabName="acid1"),
            menuSubItem("Tipos de Veículos"    ,tabName="veiculo1"),
-           menuSubItem("Efeito de Drogas"    ,tabName="droga1"),
-           menuSubItem("Efeito de Alcool"    ,tabName="alcool1")),
+           menuSubItem("Efeito de Drogas"    ,tabName="droga1",icon=icon("capsules")),
+           menuSubItem("Efeito de Alcool"    ,tabName="alcool1",icon=icon("beer"))),
   menuItem("OCORRÊNCIAS"                     ,tabName="calendario1",icon=icon("calendar"),
            menuSubItem("Dias Semana"         ,tabName="dia1"),
            menuSubItem("Meses"               ,tabName="mes1"),
@@ -181,31 +147,42 @@ dashboardSidebar(width=200,
            menuSubItem("Turno"               ,tabName="turno1")),
   menuItem("CUSTO HOSPITALAR"                ,tabName="custo1",icon=icon("hospital"),
            menuSubItem("Dias de Internção"  ,tabName="dias1"),
-           menuSubItem("Custo de internação" ,tabName="custo2")),
+           menuSubItem("Custo de internação" ,tabName="custo2",icon=icon("dollar"))),
   menuItem("LOCALIZAÇÃO"                     ,tabName="map1", icon=icon("globe"),
            menuSubItem("Bairros"             ,tabName="bairro1"),
            menuSubItem("Metropolitana"       ,tabName="metro1")
-           )
-  )
-  ),
+           ),
+  menuItem("MAPAS"                           ,tabName="mapa1",icon=icon("earth"),
+           menuSubItem("Belém"               ,tabName="belem1",icon=icon("city")),
+           menuSubItem("Municípios"          ,tabName="metrop1")
+)
+)
+),
+
+#2.3 Criação da Pagina Inicial Dashboard                                        ----
 dashboardBody(
 #  use_theme(meu_tema),
   tabItems(
     tabItem(tabName="sobre1",
+            tabBox(id="t1", width = 12,
+            tabPanel("Termilogia", icon=icon("address-card"),
             fluidRow(
               column(width=8,
                      position="left",
-              tags$img(src="crime.jpeg",width=600,height=400),
+              tags$img(src="detran_stm.jpeg",width=720,height=450),
               tags$br() , 
               tags$a("Photo by Asdecom"),align="left"),
               column(width=4,
               tags$br(),
               tags$p(style="text-align:justify;font-si20pt",strong("ANUÁRIO ESTATÍSTICO DE ÓBITO POR ACIDENTE DE TRÂNSITO DO DETRAN-PA, É UM CATÁLOGO QUE ENGLOBA DADOS SOBRE AS CARACTERÍSTICAS DAS VÍTIMAS FATAIS, CUJO RESULTADO É UM PROCESSO DE GESTÃO E INTEGRAÇÃO DE MÚLTIPLAS BASES DE DADOS, UTILIZANDO O MÉTODO PRABABILÍSTICO DE RELACIONAMENTO DE REGISTROS DESENVOLVIDO POR FELLEGI E SUNTER(1969).")),
-              tags$p(style="text-align: justify;font-si20pt",strong("PARA CRIAÇÃO DO ANUÁRIO EM FORMATO WEB, FOI CRIADO UM SCRIPT EM LINGUAGEM DE PROGRAMAÇÃO R-PROJECT VERSÃO 4.2.2 E UM AMBIENTE DE DESENVOLVIMENTO INTEGRADO(IDE) CHAMADO Rstudio VERSÃO 1.4.1.7 COM USO DE VÁRIOS PACOTES, PARA O AMBIENTE WINDOWS.")),
+              tags$p(style="text-align: justify;font-si20pt",strong("PARA CRIAÇÃO DO ANUÁRIO EM FORMATO WEB, FOI DESENVOLVIDO UM SCRIPT EM LINGUAGEM DE PROGRAMAÇÃO R-PROJECT VERSÃO 4.2.2 E UM AMBIENTE DE DESENVOLVIMENTO INTEGRADO(IDE) CHAMADO Rstudio VERSÃO 1.4.1.7 COM USO DE VÁRIOS PACOTES, PARA O AMBIENTE WINDOWS.")),
               tags$p(style="text-align: justify;font-si20pt",strong("O ANUÁRIO FOI CONSTRUÍDO EM ALINHAMENTO AO MANUAL DE GESTÃO DO RENAEST (RESOLUÇÃO DO CONTRAN Nº808/2020), UTILIZANDO METODOLOGIA FACTÍVEIS COM ESTATÍSTICAS DE TRÂNSITO PADRONIZADA PARA TODO O TERRITÓRIO NACIONAL, E AOS OBJETIVO DE DESENVOLVIMENTOS SUSTENTÁVEIS (RESOLUÇÃO DA ONU Nº70/2015)."))
             ),
             )
+            )
+            )
             ),
+#2.4 Criação do Body do Dashboard                                               ----
     tabItem(tabName="pareamento1"),
     tabItem(tabName="genero1",
             fluidRow(
@@ -223,7 +200,7 @@ dashboardBody(
                 solidHeader=TRUE,
                 collapsible=TRUE,
                 height=10,
-                tableOutput("summary1")
+                DT::dataTableOutput("sumario1")
               )
             ),
     ),
@@ -272,7 +249,7 @@ dashboardBody(
     tabItem(tabName="escola1",
             fluidRow(
               box(width=7,
-                  title="Grau de Escolaridades das Vítimas",
+                  title="Escolaridades das Vítimas",
                   status="primary",
                   solidHeader=TRUE,
                   collapsible=TRUE,
@@ -296,7 +273,7 @@ dashboardBody(
     tabItem(tabName="condi1",
             fluidRow(
               box(width=7,
-                  title="Condicao da Vitima",
+                  title="Condição das Vítimas",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
@@ -308,7 +285,7 @@ dashboardBody(
     tabItem(tabName="civil1",
             fluidRow(
               box(width=7,
-                  title="Estado Civil da Vitima",
+                  title="Estado Civil das Vítimas",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
@@ -344,7 +321,7 @@ dashboardBody(
     tabItem(tabName="turno1",
             fluidRow(
               box(width=6,
-                  title="Turno de Ocorrência",
+                  title="Turnos de Ocorrência",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
@@ -380,7 +357,7 @@ dashboardBody(
     tabItem(tabName="alcool1",
             fluidRow(
               box(width=6,
-                  title="Efeito de Alcool nas Ocorrência",
+                  title="Efeito de Álcool nas Ocorrência",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
@@ -412,7 +389,7 @@ dashboardBody(
     tabItem(tabName="bairro1",
             fluidRow(
               box(width=6,
-                  title="Bairro de Ocorrência",
+                  title="Bairros de Ocorrência",
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
@@ -441,6 +418,18 @@ dashboardBody(
               )
             )
     ),
+tabItem(tabName="metrop1",
+        fluidPage(
+          box(width=12,
+              title="Mapa Municipios",
+              status="danger", 
+              solidHeader=TRUE, 
+              collapsible=TRUE,
+              enable_dropdown=TRUE,
+              leafletOutput("mapa1")
+    )
+  )
+),
     tabItem(tabName="fonte1",
             fluidRow(
               box(width=12,
@@ -448,47 +437,9 @@ dashboardBody(
                   status="primary",
                   solideHeder=TRUE,
                   collapsible=TRUE,
-                  height=35, 
+                  height=, 
                   DiagrammeROutput("fonte1")
               )
-            )
-    ),
-    tabItem(tabName="medi1",
-            fluidRow(
-              box(width=3,
-                  title="Etapa 1",
-                  status="primary",
-                  solideHeder=TRUE,
-                  collapsible=TRUE,
-                  height=35, 
-                  DiagrammeROutput("med1")
-              ),
-              box(width=3,
-                  title="Etapa 2",
-                  status="primary",
-                  solideHeder=TRUE,
-                  collapsible=TRUE,
-                  height=35, 
-                  DiagrammeROutput("med2")
-              ),
-              box(width=3,
-                  title="Etapa 3",
-                  status="primary",
-                  solideHeder=TRUE,
-                  collapsible=TRUE,
-                  height=35, 
-                  DiagrammeROutput("med3")
-              ),
-              box(width=3,
-                  title="Etapa 4",
-                  status="primary",
-                  solideHeder=TRUE,
-                  collapsible=TRUE,
-                  height=35, 
-                  DiagrammeROutput("med4")
-              )
-              
-              
             )
     )
     )
@@ -497,43 +448,23 @@ dashboardBody(
 
 
 
+
+
+#3.0 INTERFACE DO SERVIDOR                                                        ----
+
 server <- function(input, output, session){
 
 
- 
+
+ output$mediabox <- renderValueBox({
+   valueBox(round(mean(Pareamento_Limpo$Idade)))
+ }) 
   
   
-  
-#-------------------------------------------------------------------------------
-# Gráfico 2 - Genero
-
-
-# Definir diretorio
-setwd("C:/Users/mario Dhiego/Documents/ENADE_2018_RMarkdown/Esqueleto_shiny/DashBoard1/Layout-DashBoard-em-Shiny")
-
-# Ler Base de Dados
-Pareamento_Limpo <- read_excel("Pareamento_Limpo.xls")
-
-Pareamento_Limpo$Genero = factor(Pareamento_Limpo$Genero,
-                          levels=names(sort(table(Pareamento_Limpo$Genero), 
-                                            decreasing=TRUE)))  
-
-output$histograma1 <- renderHighchart({
-  hchart(Pareamento_Limpo$Genero, type="bar") %>%
-    hc_title(text="Gênero das Vítimas Fatais") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-library(DiagrammeR)
+#3.1 MENU MICRODADOS                                                            ----
+#3.1.1 Diagrama p/ Fontes                                                       ----
 output$fonte1 <- renderDiagrammeR({
-  
+
 mermaid("
 graph TB
 A[PAREAMENTO]-->B{FONTES}
@@ -555,89 +486,92 @@ H-->L[ANUÁRIO WEB]
 I-->L[ANUÁRIO WEB]
 J-->L{ANUÁRIO WEB}
 K-->L(ANUÁRIO WEB)
-",width=50)
+",width=700)
+ })
+ 
+ 
+#3.1.2 Base de Dados                                                           ----
+output$tabela1 <- renderDataTable({
+  setwd("C:/Users/mario.valente/Desktop/Relatorio_Dinamico/DASH1")
+  Pareamento_Limpo <- read_excel("Pareamento_Limpo.xls")
+  datatable(Pareamento_Limpo, 
+            plugins='natural',
+            extensions='Buttons',
+            options=list(dom='Blfrtip',buttons=c('copy','csv','excel','pdf','print'),
+                         engthMenu=list(c(5,50,100,250,-1)), c(5,50,100,250,"All"),
+                         pageLength=5, 
+                         autoWidth=TRUE,
+                         scrollX=TRUE),
+            rownames=FALSE,
+            class='cell-border compact stripe hover row-border order-column dt-body-right',
+            style='bootstrap',
+            editable='cell',
+            colnames=c('Ano','Gênero','Idade','Faixa-Etária','Raça','Estado Civil','Escolaridade','Local Obito','Drogas','Alcool','Condição','Veiculo','Tipo','Turno','Dia','Meses','Rua','Bairro','Municipios','Fatal'),
+            caption='Base de Dados sobre Vitimas Fatais por Acidentes de Trânsito-2020.')
+})
+
+
+#3.2 MENU SÓCIOECONÔMICO                                                        ----
+#3.2.1  Gráfico p/ Gênero x Ano                                                 ----
+
+Pareamento_Limpo$Genero = factor(Pareamento_Limpo$Genero,
+                                 levels=names(sort(table(Pareamento_Limpo$Genero), 
+                                                   decreasing=TRUE)))  
+output$histograma1 <- renderHighchart({
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(Genero, Ano)
+  glimpse(Pareamento1)
+  
+  hchart(Pareamento1, type="bar", 
+         hcaes(x=Genero, y=n, group=Ano)) %>%
+    hc_title(text="") %>%
+    hc_subtitle(text="") %>%
+    hc_xAxis(title=list(text="")) %>%
+    hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+    hc_legend(
+      align="right",
+      verticalAlign="top",
+      layout = "vertical")%>%
+    hc_tooltip(
+      crosshairs=TRUE,
+      borderWidth=2,
+      sort=TRUE,
+      table=TRUE,
+      valueSuffix="Fatais") %>%
+    hc_caption(text="Fonte:")%>%
+    hc_add_theme(hc_theme_google())
 })
 
 
 
-output$med1 <- renderDiagrammeR({
-  mermaid("
-graph TB
-A[PAREAMENTO1]-->B{Base Policial}
-B-->C[PC]
-B-->D[PRE]
-B-->E[PRF]
-B-->F[IML]
-C-->G(LUVF1)
-D-->G(LUVF1)
-E-->G(LUVF1)
-F-->G(LUVF1)
-",width=30)
+#3.2.2  Gráfico p/ Idade x Ano                                                  ----
+output$resumoidade1 <- renderHighchart({
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(Idade, Ano)
+  glimpse(Pareamento1)
+  
+  hchart(Pareamento1, type="line", 
+         hcaes(x=Idade, y=n, group=Ano)) %>%
+    hc_title(text="") %>%
+    hc_subtitle(text="") %>%
+    hc_xAxis(title=list(text="Idade")) %>%
+    hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+    hc_legend(
+      align="right",
+      verticalAlign="top",
+      layout = "vertical")%>%
+    hc_tooltip(
+      crosshairs=TRUE,
+      borderWidth=2,
+      sort=TRUE,
+      table=TRUE,
+      valueSuffix="Fatais") %>%
+    hc_caption(text="Fonte:")%>%
+    hc_add_theme(hc_theme_google())
 })
 
-
-output$med2 <- renderDiagrammeR({
-  mermaid("
-graph TB
-A[PAREAMENTO2]-->B{Base Resgate}
-B-->C[SAMU]
-B-->D[BOMBEIRO]
-C-->E(LUVF2)
-D-->E(LUVF2)
-",width=30)
-})
-
-output$med3 <- renderDiagrammeR({
-  mermaid("
-graph TB
-A[PAREAMENTO3]-->B{Base Saúde}
-B-->C[SESMA]
-B-->D[SESPA]
-B-->E(HMUE)
-C-->F(LUVF3)
-D-->F(LUVF3)
-E-->F(LUVF3)
-",width=30)
-})
-
-output$med4 <- renderDiagrammeR({
-  mermaid("
-graph TB
-A[PAREAMENTO FINAL]-->B{BASES}
-B-->C[LUVF1]
-B-->D[LUVF2]
-B-->E(LUVF3)
-C-->F(BASE FINAL)
-D-->F(BASE FINAL)
-E-->F(BASE FINAL)
-",width=30)
-})
-
-
-
-
-#(table(Tabela_DT$Genero),
-#        xlab="",
-#        ylab="",
-#        col="blue",
-#        #xlim=c(0,300),
-#        #ylim=c(0,300),
-#        axis.lty="solid",
-#        lwd=2,
-#        font=2,
-#        main="Gráfico de Barras")
-
-#-------------------------------------------------------------------------------
-
-#describeBy(Pareamento_Limpo$Idade)
-#library(gmodels)
-
-library(janitor) 
-library(kableExtra)
-library(knitr)
-
-
-output$summary1 <- renderTable({
+#3.2.3  Tabela Faixa Etária x Gênero                                            ----
+output$sumario1 <- renderDataTable({
   dt=data.frame(x=Pareamento_Limpo$`Faixa Etária`,y=Pareamento_Limpo$Genero)
   tabela1 <- tabyl(dt,x,y,show_na=FALSE)%>%
     adorn_totals("col")%>%
@@ -647,11 +581,10 @@ output$summary1 <- renderTable({
     adorn_rounding(2)%>%
     adorn_ns()%>%
     adorn_title("combined", row_name="Idade",col_name="Genero") 
-  
-  })
-  
+})
 
 
+#3.2.4  Tabela Resumo Idade                                                     ----
 output$resumoidade2 <- DT::renderDataTable({
   Descritiva <- rbind(
     "Vitimas Fatais"=NROW(Pareamento_Limpo$Idade),
@@ -666,38 +599,397 @@ output$resumoidade2 <- DT::renderDataTable({
   colnames(Descritiva)="Estatísticas"
   datatable(Descritiva,
             caption='Tabela 1: Perfil Etário das Vitimas Fatais.')
-  
-  
-  
 })
 
 
-
-
-# Gráfico 2 - Idade
-#output$histograma2 <- renderPlotly({
-
-
-
-output$resumoidade1 <- renderHighchart({
-  hchart(Pareamento_Limpo$Idade) %>%
-    hc_title(text="Idade") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
+#3.2.5  Gráfico p/ Faixa Etária x Ano                                           ----
 Pareamento_Limpo$`Faixa Etária`=factor(Pareamento_Limpo$`Faixa Etária`,
                             levels=names(sort(table(Pareamento_Limpo$`Faixa Etária`), 
                                               decreasing=TRUE)))
 output$histograma2 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Faixa Etária`, type="bar") %>%
-    hc_title(text="Faixa Etária") %>%
+  
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(`Faixa Etária`, Ano)
+  glimpse(Pareamento1)
+  
+  hchart(Pareamento1, type="bar", 
+         hcaes(x=`Faixa Etária`, y=n, group=Ano)) %>%
+    hc_title(text="") %>%
+    hc_subtitle(text="") %>%
+    hc_xAxis(title=list(text="")) %>%
+    hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+    hc_legend(
+      align="right",
+      verticalAlign="top",
+      layout = "vertical")%>%
+    hc_tooltip(
+      crosshairs=TRUE,
+      borderWidth=2,
+      sort=TRUE,
+      table=TRUE,
+      valueSuffix="Fatais") %>%
+    hc_caption(text="Fonte:")%>%
+    hc_add_theme(hc_theme_google())
+})
+
+
+
+
+#3.2.6  Gráfico p/ Escolaridade x Ano                                           ----
+Pareamento_Limpo$Escolaridade = factor(Pareamento_Limpo$Escolaridade,
+                          levels=names(sort(table(Pareamento_Limpo$Escolaridade), 
+                          decreasing=TRUE)))
+
+output$histograma4 <- renderHighchart({
+  
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(Escolaridade, Ano)
+  glimpse(Pareamento1)
+  
+  hchart(Pareamento1, type="bar", 
+         hcaes(x=Escolaridade, y=n, group=Ano)) %>%
+    hc_title(text="") %>%
+    hc_subtitle(text="") %>%
+    hc_xAxis(title=list(text="")) %>%
+    hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+    hc_legend(
+      align="right",
+      verticalAlign="top",
+      layout = "vertical")%>%
+    hc_tooltip(
+      crosshairs=TRUE,
+      borderWidth=2,
+      sort=TRUE,
+      table=TRUE,
+      valueSuffix="Fatais") %>%
+    hc_caption(text="Fonte:")%>%
+    hc_add_theme(hc_theme_google())
+})
+
+
+#3.2.7  Gráfico p/ Raça x Ano                                                   ----
+Pareamento_Limpo$Raça = factor(Pareamento_Limpo$Raça,
+                        levels=names(sort(table(Pareamento_Limpo$Raça), 
+                                                    decreasing=TRUE)))
+  output$histograma3 <- renderHighchart({
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(Raça, Ano)
+    glimpse(Pareamento1)
+    
+    hchart(Pareamento1, type="bar", 
+           hcaes(x=Raça, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+#3.2.8  Gráfico p/ Estado Civil x Ano                                           ----
+Pareamento_Limpo$`Estado Civil`=factor(Pareamento_Limpo$`Estado Civil`,
+              levels=names(sort(table(Pareamento_Limpo$`Estado Civil`), 
+                                                           decreasing=TRUE)))
+output$histograma6 <- renderHighchart({
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(`Estado Civil`, Ano)
+  glimpse(Pareamento1)
+    
+    hchart(Pareamento1, type="bar", 
+           hcaes(x=`Estado Civil`, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+
+  })
+
+
+#3.3 MENU CONDIÇÃO DA VÍTIMA                                                    ----
+#3.3.1  Gráfico p/ Condição Vítima x Ano                                        ----
+  Pareamento_Limpo$`Condição Vitima` = factor(Pareamento_Limpo$`Condição Vitima`,
+                          levels=names(sort(table(Pareamento_Limpo$`Condição Vitima`), 
+                                            decreasing=TRUE)))
+  output$histograma5 <- renderHighchart({
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(`Condição Vitima`, Ano)
+    glimpse(Pareamento1)
+
+    hchart(Pareamento1, type="bar", 
+           hcaes(x=`Condição Vitima`, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+#3.3.2  Gráfico p/ Tipo de Acidente x Ano                                       ----
+  Pareamento_Limpo$`Tipo de Acidente`=factor(Pareamento_Limpo$`Tipo de Acidente`,
+                                             levels=names(sort(table(Pareamento_Limpo$`Tipo de Acidente`), 
+                                                               decreasing=TRUE)))
+  output$histograma10 <- renderHighchart({
+    
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(`Tipo de Acidente`, Ano)
+    glimpse(Pareamento1)
+    
+    
+    hchart(Pareamento1, type="bar", 
+           hcaes(x=`Tipo de Acidente`, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+#3.3.3  Gráfico p/ Tipo de Veículo x Ano                                        ----
+Pareamento_Limpo$`Veículo Vitima`=factor(Pareamento_Limpo$`Veículo Vitima`,
+                                           levels=names(sort(table(Pareamento_Limpo$`Veículo Vitima`),
+                                                             decreasing=TRUE)))
+  output$histograma11 <- renderHighchart({
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(`Veículo Vitima`, Ano)
+    glimpse(Pareamento1)
+    hchart(Pareamento1, type="bar", 
+           hcaes(x=`Veículo Vitima`, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+    
+})
+
+
+#3.3.4  Gráfico p/ Efeito de Drogas x Ano                                       ----
+  Pareamento_Limpo$`Efeito Drogas`=factor(Pareamento_Limpo$`Efeito Drogas`,
+                                          levels=names(sort(table(Pareamento_Limpo$`Efeito Drogas`), 
+                                                            decreasing=TRUE)))
+  output$histograma13 <- renderHighchart({
+    hchart(Pareamento_Limpo$`Efeito Drogas`, type="bar") %>%
+      hc_title(text="") %>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE) %>%
+      hc_caption(text="Fonte: Detran-PA")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+#3.3.5  Gráfico p/ Efeito de Alcool x Ano                                       ----
+  Pareamento_Limpo$`Efeito Alcool`=factor(Pareamento_Limpo$`Efeito Alcool`,
+                                          levels=names(sort(table(Pareamento_Limpo$`Efeito Alcool`), 
+                                                            decreasing=TRUE)))
+  output$histograma12 <- renderHighchart({
+    hchart(Pareamento_Limpo$`Efeito Alcool`, type="bar") %>%
+      hc_title(text="Sob Efeito de Alcool") %>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE) %>%
+      hc_caption(text="Fonte: Detran-PA")%>%
+      hc_subtitle(text="Dosagem (mlg)")%>%
+      hc_add_theme(hc_theme_google())
+  })
+
+
+#3.3.6  Gráfico p/ Efeito de Alcool x Gênero                                    ----
+output$boxplot1 <- renderPlotly({
+Pareamento_Limpo$Genero=factor(Pareamento_Limpo$Genero,
+                                   levels=names(sort(table(Pareamento_Limpo$Genero), 
+                                                     decreasing=TRUE)))
+    gbox1 <- ggplot(Pareamento_Limpo, aes(y=Alcool, x=Genero, color=Genero))+
+      geom_boxplot(alpha=0.15, fill="blue")+
+      labs(x="Gênero",
+           y="Dosagem Alcoólica (mg/l)",
+           title="Vítimas Fatais p/ Acidentes de Trânsito",
+           caption="Fonte: Detran")+
+      theme_gray(base_size=14)+
+      theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+            plot.caption=element_text(size=10L,face="bold",hjust=0), 
+            axis.title.y=element_text(size=12L,face="bold"), 
+            axis.title.x = element_text(size=12L,face="bold"))+
+      geom_point()+
+      geom_jitter()+
+      geom_violin(trim=FALSE,alpha=0.1,fill="blue", color="blue")
+    ggplotly(gbox1)
+})
+
+
+#3.4 MENU OCORRÊNCIA                                                            ----
+#3.4.1 Gráfico p/ Dias x Ano                                                    ----
+
+Pareamento_Limpo$Dia=factor(Pareamento_Limpo$Dia,
+                              levels=names(sort(table(Pareamento_Limpo$Dia), 
+                                                decreasing=TRUE)))
+  output$histograma8 <- renderHighchart({
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(Dia, Ano)
+    glimpse(Pareamento1)
+    
+    hchart(Pareamento1, type="line", 
+           hcaes(x=Dia, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+#3.4.2 Gráfico p/ Meses x Ano                                                   ----
+Pareamento_Limpo$Meses=factor(Pareamento_Limpo$Meses,
+                                levels=names(sort(table(Pareamento_Limpo$Meses),
+                                                  decreasing=TRUE)))
+  output$histograma7 <- renderHighchart({
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(Meses, Ano)
+    glimpse(Pareamento1)
+    
+    hchart(Pareamento1, type="line", 
+           hcaes(x=Meses, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+  })
+
+
+
+
+  
+
+
+#3.4.3 Gráfico p/ Turno x Ano                                                   ----
+Pareamento_Limpo$`Turno Obito`=factor(Pareamento_Limpo$`Turno Obito`,
+                                        levels=names(sort(table(Pareamento_Limpo$`Turno Obito`), 
+                                                          decreasing=TRUE)))
+  output$histograma9 <- renderHighchart({
+    
+    Pareamento1 <- Pareamento_Limpo %>%
+      count(`Turno Obito`, Ano)
+    glimpse(Pareamento1)
+    
+    hchart(Pareamento1, type="line", 
+           hcaes(x=`Turno Obito`, y=n, group=Ano)) %>%
+      hc_title(text="") %>%
+      hc_subtitle(text="") %>%
+      hc_xAxis(title=list(text="")) %>%
+      hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+      hc_legend(
+        align="right",
+        verticalAlign="top",
+        layout = "vertical")%>%
+      hc_tooltip(
+        crosshairs=TRUE,
+        borderWidth=2,
+        sort=TRUE,
+        table=TRUE,
+        valueSuffix="Fatais") %>%
+      hc_caption(text="Fonte:")%>%
+      hc_add_theme(hc_theme_google())
+})
+
+
+# 3.5 LOCALIZAÇÃO                                                               ----
+# 3.5.1 Gráfico p/ Bairros x Ano                                                ----
+Pareamento_Limpo2$Bairro=factor(Pareamento_Limpo2$Bairro,
+                              levels=names(sort(table(Pareamento_Limpo2$Bairro), 
+                                                decreasing=TRUE)))
+output$histograma14 <- renderHighchart({
+  hchart(Pareamento_Limpo2$Bairro, type="bar") %>%
+    hc_title(text="Bairros de ocorrências") %>%
     hc_tooltip(
       crosshairs=TRUE,
       borderWidth=2,
@@ -706,6 +998,163 @@ output$histograma2 <- renderHighchart({
     hc_caption(text="Fonte: Detran-PA")%>%
     hc_add_theme(hc_theme_google())
 })
+
+# 3.5.2 Gráfico p/ Bairros x Gênero                                             ----
+output$bairro2 <- renderTable({
+  Pareamento_Limpo2 <- read_excel("Pareamento_Limpo2.xls")
+  Pareamento_Limpo2$Genero=factor(Pareamento_Limpo2$Genero,
+                                  levels=names(sort(table(Pareamento_Limpo2$Genero), 
+                                                    decreasing=TRUE)))
+  dt=data.frame(x=Pareamento_Limpo2$Bairro,y=Pareamento_Limpo2$Genero)
+  tabela1 <- tabyl(dt,x,y,show_na=FALSE)%>%
+    adorn_totals("col")%>%
+    adorn_totals("row")%>%
+    adorn_percentages("all")%>%
+    adorn_pct_formatting(digits=1)%>%
+    adorn_rounding(2)%>%
+    adorn_ns()%>%
+    adorn_title("combined", row_name="Bairros",col_name="Gênero") 
+  
+})
+
+
+
+# 3.5.3 Gráfico p/ Municípios x Ano                                             ----
+Pareamento_Limpo$Municípios=factor(Pareamento_Limpo$Municípios,
+                               levels=names(sort(table(Pareamento_Limpo$Municípios), 
+                                                 decreasing=TRUE)))
+output$histograma15 <- renderHighchart({
+  
+  Pareamento1 <- Pareamento_Limpo %>%
+    count(Municípios, Ano)
+  glimpse(Pareamento1)
+  
+  hchart(Pareamento1, type="bar", #type="bar", "column", "line"
+         hcaes(x=Municípios, y=n, group=Ano)) %>%
+    hc_title(text="Municípios de ocorrências") %>%
+    hc_subtitle(text="") %>%
+    hc_xAxis(title=list(text="")) %>%
+    hc_yAxis(title=list(text="Número de Vítimas Fatais")) %>%
+    hc_legend(
+      align="right",
+      verticalAlign="top",
+      layout = "vertical")%>%
+    hc_tooltip(
+      crosshairs=TRUE,
+      borderWidth=2,
+      sort=TRUE,
+      table=TRUE,
+      valueSuffix="Fatais") %>%
+    hc_caption(text="Fonte:")%>%
+    hc_add_theme(hc_theme_google())
+})
+
+
+#setwd("C:/Users/mario.valente/Desktop/Relatorio_Dinamico/DASH1")
+#BASE_PA = readOGR("PA_Municipios_2020.shp")
+#OVID19_MAR_PA = read.csv("COVID19_MAR_PA.csv",header=TRUE,sep=",")
+#MAPAACIDENTE1 <- merge(BASE_PA, COVID19_MAR_PA,by.x= "CD_MUN",by.y="city_ibge_code")
+
+
+
+
+
+#output$mapa1 <- renderLeaflet({
+ 
+
+#})
+
+  
+
+#4 MAPAS                                                                        ----
+#4.1 Municípios                                                                 ----
+
+#setwd("C:/Users/mario.valente/Desktop/Relatorio_Dinamico/DASH1")
+#map <-st_read("PA_Municipios_2020.shp", stringsAsFactors = FALSE)
+
+
+
+
+
+
+#5 REFERÊNCIAS                                                                 ----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#5 Rascunhos                                                                    ----
+# Temas
+#hc_theme_superheroes()
+
+#output$regressao1 <- renderPrint({
+#  model1 <- lm(mpg~am,data=mtcars)
+#  model2 <- lm(mpg~am + wt + hp,data=mtcars)
+#  modelo1 <- stargazer(model1,model2,digits=4, type = "html", header = FALSE)
+#})
+
+#hcmap(map="countries/br/br-all", 
+#      showInLegend= FALSE) %>%
+#$  hc_title(text = "Brasil") 
+
+
+# Customização Visual
+#meu_tema <- create_theme(
+#  adminlte_color(
+#    aqua="#0821F7",
+#    blue="#6573E5",
+#    red ="#ABB2ED",
+#  ),
+#    adminlte_sidebar(
+#      dark_bg="#09DAF3"
+#        ),
+#    adminlte_global(
+#      content_bg="#99DEE6" 
+#    )
+#    )
+
+
+#liberar memoria
+#rm(list=ls())
+
+
+#install.packages("reactablefmtr")
+#output$histograma7 <- renderPlotly({
+#  Pareamento_Limpo$Meses=factor(Pareamento_Limpo$Meses,
+#                                    levels=names(sort(table(Pareamento_Limpo$Meses), 
+#                                                      decreasing=TRUE)))
+#  g7 <- ggplot(Pareamento_Limpo, aes(x=Meses))+
+#    geom_bar(fill="blue")+
+#    labs(x="Meses de Ocorrência",
+#         y="Número de Vítimas",
+#         title="Gráfico de Barras",
+#         caption="Fonte: Detran")+
+#    theme_gray()+
+#    theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
+#          plot.caption=element_text(size=10L,face="bold",hjust=0), 
+#          axis.title.y=element_text(size=12L,face="bold"), 
+#          axis.title.x=element_text(size=12L,face="bold"),
+#          legend.position = "bottom")
+# ggplotly(g7)
+#})
+
+
+#library(timetk)
 
 
 #Pareamento_Limpo$Genero=factor(Pareamento_Limpo$Genero,
@@ -722,27 +1171,27 @@ output$histograma2 <- renderHighchart({
 #        plot.caption=element_text(size=10L,face="bold",hjust=0), 
 #        axis.title.y=element_text(size=12L,face="bold"), 
 #        axis.title.x = element_text(size=12L,face="bold"))+
-  #geom_point()
-  #geom_jitter(width=0.15)+
+#geom_point()
+#geom_jitter(width=0.15)+
 #  geom_violin(trim=FALSE,alpha=0.1,fill="blue", color="blue")
-  #coord_flip()
+#coord_flip()
 #ggplotly(g2)
-  
-    #hist(Tabela_DT$Idade,
-    #     col="blue",
-    #     freq=T,
-    #     xlab="Idades",
-    #    ylab="Nº de Vítimas Fatais",
-    #     border="black",
-    #     xlim=c(0,100),
-    #     ylim=c(0,80),
-    #     axis.lty="solid",
-    #     lwd=2,
-    #     font=2,
-    #     #probability=TRUE,
-    #     main="Hitograma das Idades",
-    #     #sub="Fonte: Detran"
-    #    )
+
+#hist(Tabela_DT$Idade,
+#     col="blue",
+#     freq=T,
+#     xlab="Idades",
+#    ylab="Nº de Vítimas Fatais",
+#     border="black",
+#     xlim=c(0,100),
+#     ylim=c(0,80),
+#     axis.lty="solid",
+#     lwd=2,
+#     font=2,
+#     #probability=TRUE,
+#     main="Hitograma das Idades",
+#     #sub="Fonte: Detran"
+#    )
 #})
 
 # Grafico de Densidade
@@ -763,7 +1212,7 @@ output$histograma2 <- renderHighchart({
 #summary(Pareamento_Limpo$Idade, format=TRUE, pattern='%.2f')
 
 # Polígonos de frequência
-#plot(tab.est,
+#lot(tab.est,
 #     type='rfp',
 #     col="red",
 #     xlab="Limite das Classes",
@@ -789,366 +1238,20 @@ output$histograma2 <- renderHighchart({
 #abline(h=0)
 
 
+#(table(Tabela_DT$Genero),
+#        xlab="",
+#        ylab="",
+#        col="blue",
+#        #xlim=c(0,300),
+#        #ylim=c(0,300),
+#        axis.lty="solid",
+#        lwd=2,
+#        font=2,
+#        main="Gráfico de Barras")
 
-Pareamento_Limpo$Escolaridade = factor(Pareamento_Limpo$Escolaridade,
-                          levels=names(sort(table(Pareamento_Limpo$Escolaridade), 
-                          decreasing=TRUE)))
-
-output$histograma4 <- renderHighchart({
-  hchart(Pareamento_Limpo$Escolaridade, type="bar") %>%
-    hc_title(text="Grau de Escolaridade") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
+#describeBy(Pareamento_Limpo$Idade)
 
 
-
-  Pareamento_Limpo$Raça = factor(Pareamento_Limpo$Raça,
-                                  levels=names(sort(table(Pareamento_Limpo$Raça), 
-                                                    decreasing=TRUE)))
-  output$histograma3 <- renderHighchart({
-    hchart(Pareamento_Limpo$Raça, type="bar") %>%
-      hc_title(text="Raça ou Etnia") %>%
-      hc_tooltip(
-        crosshairs=TRUE,
-        borderWidth=2,
-        sort=TRUE,
-        table=TRUE) %>%
-      hc_caption(text="Fonte: Detran-PA")%>%
-      hc_add_theme(hc_theme_google())
-  })
-  
-  
-  
-
-
-
-  Pareamento_Limpo$`Condição Vitima` = factor(Pareamento_Limpo$`Condição Vitima`,
-                          levels=names(sort(table(Pareamento_Limpo$`Condição Vitima`), 
-                                            decreasing=TRUE)))
-  output$histograma5 <- renderHighchart({
-    hchart(Pareamento_Limpo$`Condição Vitima`, type="bar") %>%
-      hc_title(text="Condição da Vítima") %>%
-      hc_tooltip(
-        crosshairs=TRUE,
-        borderWidth=2,
-        sort=TRUE,
-        table=TRUE) %>%
-      hc_caption(text="Fonte: Detran-PA")%>%
-      hc_add_theme(hc_theme_google())
-  })
-  
-  
-  
-  
-  
-  
-  
-
-
-
-
-  Pareamento_Limpo$`Estado Civil`=factor(Pareamento_Limpo$`Estado Civil`,
-                              levels=names(sort(table(Pareamento_Limpo$`Estado Civil`), 
-                                                decreasing=TRUE)))
-  output$histograma6 <- renderHighchart({
-    hchart(Pareamento_Limpo$`Estado Civil`, type="bar") %>%
-      hc_title(text="Estado Civil") %>%
-      hc_tooltip(
-        crosshairs=TRUE,
-        borderWidth=2,
-        sort=TRUE,
-        table=TRUE) %>%
-      hc_caption(text="Fonte: Detran-PA")%>%
-      hc_add_theme(hc_theme_google())
-  })
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-#output$histograma7 <- renderPlotly({
-#  Pareamento_Limpo$Meses=factor(Pareamento_Limpo$Meses,
-#                                    levels=names(sort(table(Pareamento_Limpo$Meses), 
-#                                                      decreasing=TRUE)))
-#  g7 <- ggplot(Pareamento_Limpo, aes(x=Meses))+
-#    geom_bar(fill="blue")+
-#    labs(x="Meses de Ocorrência",
-#         y="Número de Vítimas",
-#         title="Gráfico de Barras",
-#         caption="Fonte: Detran")+
-#    theme_gray()+
-#    theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
-#          plot.caption=element_text(size=10L,face="bold",hjust=0), 
-#          axis.title.y=element_text(size=12L,face="bold"), 
-#          axis.title.x=element_text(size=12L,face="bold"),
-#          legend.position = "bottom")
-# ggplotly(g7)
-#})
-
-
-
-Pareamento_Limpo$Dia=factor(Pareamento_Limpo$Dia,
-                                       levels=names(sort(table(Pareamento_Limpo$Dia), 
-                                                         decreasing=TRUE)))
-output$histograma8 <- renderHighchart({
-  hchart(Pareamento_Limpo$Dia, type="bar") %>%
-    hc_title(text="ocorrências por Dias da Semana") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-
-
-Pareamento_Limpo$`Turno Obito`=factor(Pareamento_Limpo$`Turno Obito`,
-                                           levels=names(sort(table(Pareamento_Limpo$`Turno Obito`), 
-                                                             decreasing=TRUE)))
-output$histograma9 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Turno Obito`, type="bar") %>%
-    hc_title(text="ocorrências por Turno") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo$`Tipo de Acidente`=factor(Pareamento_Limpo$`Tipo de Acidente`,
-                                         levels=names(sort(table(Pareamento_Limpo$`Tipo de Acidente`), 
-                                                           decreasing=TRUE)))
-output$histograma10 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Tipo de Acidente`, type="bar") %>%
-    hc_title(text="ocorrências por Tipo de Acidentes") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo$`Veículo Vitima`=factor(Pareamento_Limpo$`Veículo Vitima`,
-                                        levels=names(sort(table(Pareamento_Limpo$`Veículo Vitima`), 
-                                                          decreasing=TRUE)))
-output$histograma11 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Veículo Vitima`, type="bar") %>%
-    hc_title(text="ocorrências por Tipo de Veículos") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo$`Efeito Alcool`=factor(Pareamento_Limpo$`Efeito Alcool`,
-                                        levels=names(sort(table(Pareamento_Limpo$`Efeito Alcool`), 
-                                                          decreasing=TRUE)))
-output$histograma12 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Efeito Alcool`, type="bar") %>%
-    hc_title(text="Sob Efeito de Alcool") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_subtitle(text="Dosagem (mlg)")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo$`Efeito Drogas`=factor(Pareamento_Limpo$`Efeito Drogas`,
-                            levels=names(sort(table(Pareamento_Limpo$`Efeito Drogas`), 
-                                              decreasing=TRUE)))
-output$histograma13 <- renderHighchart({
-  hchart(Pareamento_Limpo$`Efeito Drogas`, type="bar") %>%
-    hc_title(text="ocorrências por Tipo de Veículos") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-
-Pareamento_Limpo$Meses=factor(Pareamento_Limpo$Meses,
-                            levels=names(sort(table(Pareamento_Limpo$Meses), 
-                                              decreasing=TRUE)))
-output$histograma7 <- renderHighchart({
-  hchart(Pareamento_Limpo$Meses, type="bar") %>%
-    hc_title(text="ocorrências por Meses") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo2$Bairro=factor(Pareamento_Limpo2$Bairro,
-                              levels=names(sort(table(Pareamento_Limpo2$Bairro), 
-                                                decreasing=TRUE)))
-output$histograma14 <- renderHighchart({
-  hchart(Pareamento_Limpo2$Bairro, type="bar") %>%
-    hc_title(text="Bairros de ocorrências") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())
-})
-
-
-Pareamento_Limpo$Municípios=factor(Pareamento_Limpo$Municípios,
-                               levels=names(sort(table(Pareamento_Limpo$Municípios), 
-                                                 decreasing=TRUE)))
-output$histograma15 <- renderHighchart({
-  hchart(Pareamento_Limpo$Municípios, type="bar") %>%
-    hc_title(text="Municípios de ocorrências") %>%
-    hc_tooltip(
-      crosshairs=TRUE,
-      borderWidth=2,
-      sort=TRUE,
-      table=TRUE) %>%
-    hc_caption(text="Fonte: Detran-PA")%>%
-    hc_add_theme(hc_theme_google())%>%
-    hc_legend(enabled = TRUE) 
-})
-
-
-
-
-
-  
-output$tabela1 <- renderDataTable({
-  Pareamento_Limpo <- read_excel("Pareamento_Limpo.xls")
-  datatable(Pareamento_Limpo, 
-            plugins='natural',
-            extensions='Buttons',
-            options=list(dom='Blfrtip',buttons=c('copy','csv','excel','pdf','print'),
-                           engthMenu=list(c(5,50,100,250,-1)), c(5,50,100,250,"All"),
-                           pageLength=5, 
-                           autoWidth=TRUE,
-                           scrollX=TRUE),
-          rownames=FALSE,
-          class='cell-border compact stripe hover row-border order-column dt-body-right',
-          style='bootstrap',
-          editable='cell',
-          colnames=c('Gênero','Idade','Faixa-Etária','Raça','Estado Civil','Escolaridade','Local Obito','Drogas','Alcool','Condição','Veiculo','Tipo','Turno','Dia','Meses','Rua','Bairro','Municipios','Fatal'),
-          caption='Base de Dados sobre Vitimas Fatais por Acidentes de Trânsito-2020.')
-  })
-
-#output$regressao1 <- renderPrint({
-#  model1 <- lm(mpg~am,data=mtcars)
-#  model2 <- lm(mpg~am + wt + hp,data=mtcars)
-#  modelo1 <- stargazer(model1,model2,digits=4, type = "html", header = FALSE)
-#})
-    
-#hcmap(map="countries/br/br-all", 
-#      showInLegend= FALSE) %>%
-#$  hc_title(text = "Brasil") 
-    
-  
-
-output$boxplot1 <- renderPlotly({
-  Pareamento_Limpo$Genero=factor(Pareamento_Limpo$Genero,
-                          levels=names(sort(table(Pareamento_Limpo$Genero), 
-                                                       decreasing=TRUE)))
-gbox1 <- ggplot(Pareamento_Limpo, aes(y=Alcool, x=Genero, color=Genero))+
- geom_boxplot(alpha=0.15, fill="blue")+
-    labs(x="Gênero",
-         y="Dosagem Alcoólica (mg/l)",
-         title="Vítimas Fatais p/ Acidentes de Trânsito",
-         caption="Fonte: Detran")+
-  theme_gray(base_size=14)+
-  theme(plot.title=element_text(size=12L,face="bold",hjust=0.5), 
-        plot.caption=element_text(size=10L,face="bold",hjust=0), 
-        axis.title.y=element_text(size=12L,face="bold"), 
-        axis.title.x = element_text(size=12L,face="bold"))+
-  geom_point()+
-  geom_jitter()+
-  geom_violin(trim=FALSE,alpha=0.1,fill="blue", color="blue")
-ggplotly(gbox1)
-
-  
-})
-
-
-
-
-output$bairro2 <- renderTable({
-  Pareamento_Limpo2 <- read_excel("Pareamento_Limpo2.xls")
-  Pareamento_Limpo2$Genero=factor(Pareamento_Limpo2$Genero,
-                                 levels=names(sort(table(Pareamento_Limpo2$Genero), 
-                                                   decreasing=TRUE)))
-  dt=data.frame(x=Pareamento_Limpo2$Bairro,y=Pareamento_Limpo2$Genero)
-  tabela1 <- tabyl(dt,x,y,show_na=FALSE)%>%
-    adorn_totals("col")%>%
-    adorn_totals("row")%>%
-    adorn_percentages("all")%>%
-    adorn_pct_formatting(digits=1)%>%
-    adorn_rounding(2)%>%
-    adorn_ns()%>%
-    adorn_title("combined", row_name="Bairros",col_name="Gênero") 
-  
-})
-
-
-
-  
-  
-  
 }
 
-
-
-
-
 shinyApp(ui, server)
-
-
-
-
-#------------------ PASSO 6 -----------------
-
-# Compilar o script
-
-
-
-
-
-
-
-
-# Commit para o github
